@@ -1,8 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { CannotFindUserException } from 'src/exceptions/CannotFindUser';
 import { IUserService } from 'src/user/user';
 import { Services } from 'src/utils/constants';
+import { comparePasswords } from 'src/utils/helpers';
 import { User } from 'src/utils/typeorm/entities/User';
-import { CreateUserParams } from 'src/utils/types/queries';
+import { CreateUserParams, ValidateUserParams } from 'src/utils/types/queries';
 import { IAuthService } from './auth';
 
 @Injectable()
@@ -13,7 +15,11 @@ export class AuthService implements IAuthService {
         return this.userService.createUser(params)
     }
 
-    validateUser() {
-
+    async validateUser(params: ValidateUserParams): Promise<User> {
+        const existingUser = await this.userService.findUser({username: params.username}, {selectPassword: true})
+        if (!existingUser) throw new CannotFindUserException()
+        const comparedPassword = await comparePasswords(params.password, existingUser.password)
+        if (!comparedPassword) throw new HttpException("Invalid password", HttpStatus.BAD_REQUEST)
+        return existingUser;
     }
 }

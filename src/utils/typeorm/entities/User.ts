@@ -18,7 +18,7 @@ export class User {
     @CreateDateColumn({name: "created_at"})
     createdAt: Date
 
-    @Column()
+    @Column({select: false})
     @Exclude()
     password: string;
 }

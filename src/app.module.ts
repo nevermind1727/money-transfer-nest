@@ -4,12 +4,15 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { entities } from './utils/typeorm/entities';
+import { PassportModule } from '@nestjs/passport';
 
 
 @Module({
     imports: [ConfigModule.forRoot({
         envFilePath: ['.env.development'],
-    }), TypeOrmModule.forRoot({
+    }),
+    PassportModule.register({session: true}), 
+    TypeOrmModule.forRoot({
         type: 'mysql',
         host: process.env.MYSQL_DB_HOST,
         port: parseInt(process.env.MYSQL_DB_PORT),

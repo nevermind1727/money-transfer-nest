@@ -1,6 +1,6 @@
 export type FindUserParams = Partial<{
-    id: number;
-    username: string;
+    id?: number;
+    username?: string;
 }>
 
 export type CreateUserParams = {
@@ -9,3 +9,12 @@ export type CreateUserParams = {
     username: string;
     password: string;
 }
+
+export type ValidateUserParams = {
+    username: string;
+    password: string;
+}
+
+export type FindUserOptions = Partial<{
+    selectPassword: boolean;
+}>
